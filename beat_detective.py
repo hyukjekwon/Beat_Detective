@@ -19,7 +19,7 @@ beats_per_minute = int(sys.argv[2])
 beats_per_measure = int(sys.argv[3])
 
 # how many milliseconds between downbeats
-measure_duration = int((60000.0 / bpm) * beats_per_measure)
+measure_duration = int((60000.0 / beats_per_minute) * beats_per_measure)
 
 # open the wav file
 snd = parselmouth.Sound(song)
