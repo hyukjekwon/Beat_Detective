@@ -44,6 +44,7 @@ while downbeat < measure_duration:
 	db = downbeat
 	while db < snd_length:
 		total_intensity += intensity.get_value(db/1000)
+		total_intensity -= high_intensity.get_value(db/1000)
 		db += measure_duration
 	if total_intensity > best_intensity:
 		best_downbeat = downbeat
@@ -85,7 +86,7 @@ while m_onset < (snd_length - measure_duration) / 1000:
 	for i in range(16):
 		sixteenths.addInterval(textgrid.Interval(m_onset + (i/16) * m_dur, m_onset + ((i+1)/16) * m_dur, ''))
 
-	m_onset += measure_duration / 1000
+	m_onset += m_dur
 
 # add to a text grid
 tg = textgrid.TextGrid(maxTime = snd_length/1000)
