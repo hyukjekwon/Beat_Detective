@@ -44,7 +44,6 @@ while downbeat < measure_duration:
 	db = downbeat
 	while db < snd_length:
 		total_intensity += intensity.get_value(db/1000)
-		total_intensity -= high_intensity.get_value(db/1000)
 		db += measure_duration
 	if total_intensity > best_intensity:
 		best_downbeat = downbeat
