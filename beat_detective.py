@@ -45,7 +45,7 @@ for downbeat in range(measure_duration):
 measures = textgrid.IntervalTier(maxTime = snd_length/1000)
 
 # add subdivision annotations
-for db in range(best_downbeat, snd_length, 2*measure_duration):
+for db in range(best_downbeat, snd_length - measure_duration, 2*measure_duration):
 	measures.addInterval(textgrid.Interval(db/1000, db/1000 + measure_duration,''))
 
 # turn into a text grid
