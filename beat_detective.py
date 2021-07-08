@@ -1,6 +1,6 @@
 # Beat detection using Parselmouth (Jadoul, Thompson, & de Boer 2018)
 # Andrew Lamont
-# June 2021
+# Summer 2021
 
 # call with python 3
 # args: file name, tempo of song in bpm, number of beats per measure, (optional: number of beats +/- to offset the downbeat by)
@@ -18,10 +18,10 @@ beats_per_minute = int(sys.argv[2])
 # set how many beats per measure
 beats_per_measure = int(sys.argv[3])
 
-# set the offset
+# set how many quarter notes to offset the downbeats
 offset = 0
 if len(sys.argv) == 5:
-	offset = int(sys.argv[4])
+	offset = float(sys.argv[4])
 
 # open the wav file
 snd = parselmouth.Sound(song)
