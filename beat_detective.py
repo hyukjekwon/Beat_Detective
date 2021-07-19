@@ -30,7 +30,10 @@ snd = parselmouth.Sound(song)
 snd_length = snd.get_total_duration() * 1000
 
 # get intensity profile, time step is a millisecond
+# whole spectrum, >5000 Hz, <500 Hz
 intensity = snd.to_intensity(time_step = .001)
+upper_intensity = snd.to_intensity(time_step = .001, minimum_pitch = 5000)
+lower_intensity = snd.to_intensity(time_step = .001, minimum_pitch = 500)
 
 # iterate through microtempos
 best_bpm = -1
@@ -50,7 +53,12 @@ while bpm < beats_per_minute + 1:
 		db = downbeat
 		total_downbeats = 0
 		while db < snd_length - 15000:
-			total_intensity += intensity.get_value(db/1000)
+			# intensity below 500 Hz
+			lower = intensity.get_value(db/1000) - lower_intensity.get_value(db/1000)
+			# intensity above 5000 Hz
+			upper = upper_intensity.get_value(db/1000)
+			total_intensity += lower + upper
+#			total_intensity += intensity.get_value(db/1000)
 			db += measure_duration
 			total_downbeats += 1
 		average_intensity = total_intensity / total_downbeats
@@ -83,7 +91,7 @@ metrics = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'metric text')
 micros = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'micro-timed text')
 
 # add subdivision annotations
-m_onset = best_downbeat / 1000
+m_onset = (best_downbeat - 15000) / 1000
 while m_onset < (snd_length - measure_duration) / 1000:
 	m_dur = measure_duration / 1000
 
