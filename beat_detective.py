@@ -13,7 +13,7 @@ import textgrid #http://github.com/kylebgorman/textgrid/
 song = sys.argv[1]
 
 # set tempo of song
-beats_per_minute = int(sys.argv[2])
+beats_per_minute = float(sys.argv[2])
 
 # set how many beats per measure
 beats_per_measure = int(sys.argv[3])
@@ -32,23 +32,38 @@ snd_length = snd.get_total_duration() * 1000
 # get intensity profile, time step is a millisecond
 intensity = snd.to_intensity(time_step = .001)
 
-# how many milliseconds between downbeats
-measure_duration = (60000 / beats_per_minute) * beats_per_measure
+# iterate through microtempos
+best_bpm = -1
 
-# iterate through milliseconds that could start a measure looking for maximum intensity
-best_downbeat = -1
-best_intensity = -1
-downbeat = 0
-while downbeat < measure_duration:
-	total_intensity = 0.0
-	db = downbeat
-	while db < snd_length:
-		total_intensity += intensity.get_value(db/1000)
-		db += measure_duration
-	if total_intensity > best_intensity:
-		best_downbeat = downbeat
-		best_intensity = total_intensity
-	downbeat += 1
+bpm = beats_per_minute - 0.99
+while bpm < beats_per_minute + 1:
+	# how many milliseconds between downbeats
+	measure_duration = (60000 / bpm) * beats_per_measure
+
+	# iterate through milliseconds that could start a measure looking for maximum intensity
+	best_downbeat = -1
+	best_intensity = -1
+	downbeat = 0
+	while downbeat < measure_duration:
+		total_intensity = 0.0
+		db = downbeat
+		total_downbeats = 0
+		while db < snd_length:
+			total_intensity += intensity.get_value(db/1000)
+			db += measure_duration
+			total_downbeats += 1
+		average_intensity = total_intensity / total_downbeats
+		if average_intensity > best_intensity:
+			best_downbeat = downbeat
+			best_intensity = total_intensity
+			if best_bpm != bpm:
+				best_bpm = bpm
+		downbeat += 1
+
+	bpm += 0.01
+
+measure_duration = (60000 / best_bpm) * beats_per_measure
+print('Best BPM:', best_bpm)
 
 if offset:
 	best_downbeat += (offset / beats_per_measure) * measure_duration
@@ -56,10 +71,10 @@ if best_downbeat < 0:
 	best_downbeat += measure_duration
 
 # create interval tiers for subdivisions
-measures = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'measure')
-halves = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'half')
-quarters = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'quarter')
-eighths = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'eighth')
+measures   = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'measure')
+halves     = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'half')
+quarters   = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'quarter')
+eighths    = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'eighth')
 sixteenths = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'sixteenth')
 
 # create interval tiers for annotation
