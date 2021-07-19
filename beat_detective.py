@@ -41,14 +41,15 @@ while bpm < beats_per_minute + 1:
 	measure_duration = (60000 / bpm) * beats_per_measure
 
 	# iterate through milliseconds that could start a measure looking for maximum intensity
+	# exclude first and last 15 seconds
 	best_downbeat = -1
 	best_intensity = -1
-	downbeat = 0
-	while downbeat < measure_duration:
+	downbeat = 15000
+	while downbeat < (measure_duration + 15000):
 		total_intensity = 0.0
 		db = downbeat
 		total_downbeats = 0
-		while db < snd_length:
+		while db < snd_length - 15000:
 			total_intensity += intensity.get_value(db/1000)
 			db += measure_duration
 			total_downbeats += 1
