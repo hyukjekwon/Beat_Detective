@@ -58,7 +58,6 @@ while bpm < beats_per_minute + 1:
 			# intensity above 5000 Hz
 			upper = upper_intensity.get_value(db/1000)
 			total_intensity += lower + upper
-#			total_intensity += intensity.get_value(db/1000)
 			db += measure_duration
 			total_downbeats += 1
 		average_intensity = total_intensity / total_downbeats
@@ -72,7 +71,10 @@ while bpm < beats_per_minute + 1:
 	bpm += 0.01
 
 measure_duration = (60000 / best_bpm) * beats_per_measure
+
 print('Best BPM:', best_bpm)
+
+best_downbeat -= 15000
 
 if offset:
 	best_downbeat += (offset / beats_per_measure) * measure_duration
@@ -90,12 +92,15 @@ sixteenths = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'sixteenth'
 metrics = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'metric text')
 micros = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'micro-timed text')
 
+total_measures = 0
+
 # add subdivision annotations
-m_onset = (best_downbeat - 15000) / 1000
+m_onset = best_downbeat / 1000
 while m_onset < (snd_length - measure_duration) / 1000:
 	m_dur = measure_duration / 1000
 
 	measures.addInterval(textgrid.Interval(m_onset, m_onset + m_dur, ''))
+	total_measures += 1
 
 	for i in range(2):
 		halves.addInterval(textgrid.Interval(m_onset + (i/2) * m_dur, m_onset + ((i+1)/2) * m_dur, ''))
@@ -110,6 +115,8 @@ while m_onset < (snd_length - measure_duration) / 1000:
 		sixteenths.addInterval(textgrid.Interval(m_onset + (i/16) * m_dur, m_onset + ((i+1)/16) * m_dur, ''))
 
 	m_onset += m_dur
+
+print('Total measures:', total_measures)
 
 # add to a text grid
 tg = textgrid.TextGrid(maxTime = snd_length/1000)
