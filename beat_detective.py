@@ -35,7 +35,7 @@ measure_duration = 240000 / bpm_flat
 total_metric_length = 1000 * (t2 - t1)
 ​
 # find the total number of measures between the first and last downbeat
-num_measures = int(metric_length / measure_duration)
+num_measures = int(total_metric_length / measure_duration)
 ​
 # use the number of measures to get a more accurate measure duration
 true_measure_dur = total_metric_length / num_measures
@@ -55,7 +55,7 @@ metrics = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'metric text')
 micros = textgrid.IntervalTier(maxTime = snd_length/1000, name = 'micro-timed text')
 ​
 # add subdivision annotations
-m_onset = first_downbeat
+m_onset = t1
 while m_onset < (snd_length - true_measure_dur) / 1000:
 	m_dur = true_measure_dur / 1000
 ​
